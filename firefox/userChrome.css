@@ -1,0 +1,125 @@
+/* ======= GLOBAL VARIABLES ======= */
+html {
+  --custom-bg: #f5f5f5;
+  --uc-sidebar-width: 60px;
+  --uc-sidebar-hover-width: 360px;
+}
+
+/* ======= GLOBAL BACKGROUND ======= */
+body {
+  background: var(--custom-bg) !important;
+}
+
+html:not([privatebrowsingmode="temporary"]) #navigator-toolbox {
+  padding-top: 3px;
+  padding-bottom: 4px;
+  background: var(--custom-bg) !important;
+  border-bottom: 0 !important;
+}
+
+/* ======= NAV BAR (CENTERED URL BAR) ======= */
+#nav-bar {
+  background: var(--custom-bg) !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: calc(100% - 20px);
+}
+
+#nav-bar > .nav-bar-inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+#urlbar {
+  left: 50% !important;
+  transform: translateX(-50%);
+  max-width: 960px !important;
+}
+
+#urlbar:not([breakout-extend]) #urlbar-background {
+  background: none !important;
+  background-color: transparent !important;
+}
+
+/* ======= IDENTITY ICON AND TITLEBAR ======= */
+#identity-icon-label {
+  display: none;
+}
+
+html:not([privatebrowsingmode="temporary"]) .titlebar-buttonbox-container {
+  position: absolute;
+  right: 0;
+  top: 9px;
+  display: flex;
+  justify-content: center;
+  width: 110px !important;
+}
+
+.titlebar-button {
+  width: 36px !important;
+}
+
+/* ======= HIDE FIREFOX NATIVE TABS ======= */
+html:not([privatebrowsingmode="temporary"]) #TabsToolbar {
+  visibility: collapse !important;
+}
+
+#TabsToolbar {
+  background: var(--custom-bg) !important;
+}
+
+/* ======= SIDEBAR: BASE STYLE ======= */
+html:not([privatebrowsingmode="temporary"]) #sidebar-box {
+  position: relative;
+  width: var(--uc-sidebar-width) !important;
+  min-width: var(--uc-sidebar-width) !important;
+  max-width: var(--uc-sidebar-width) !important;
+  background: var(--custom-bg) !important;
+  z-index: 4 !important;
+  overflow: hidden !important;
+  transition: all 200ms ease-in-out !important;
+}
+
+/* ======= SIDEBAR: EXPAND ON HOVER ======= */
+html:not([privatebrowsingmode="temporary"]) #sidebar-box:hover {
+  width: var(--uc-sidebar-hover-width) !important;
+  min-width: var(--uc-sidebar-hover-width) !important;
+  max-width: var(--uc-sidebar-hover-width) !important;
+}
+
+/* ======= EXPAND SIDEBAR INNER PANEL ON HOVER ======= */
+html:not([privatebrowsingmode="temporary"]) #sidebar-box:hover > #sidebar {
+  width: var(--uc-sidebar-hover-width) !important;
+  max-width: var(--uc-sidebar-hover-width) !important;
+}
+
+/* ======= SIDEBAR: PANEL + STYLING ======= */
+html:not([privatebrowsingmode="temporary"]) #sidebar {
+  min-width: var(--uc-sidebar-width) !important;
+  transition: all 200ms ease-in-out !important;
+}
+
+html:not([privatebrowsingmode="temporary"]) .sidebar-panel {
+  background-color: transparent !important;
+  color: var(--newtab-text-primary-color) !important;
+}
+
+/* ======= SIDEBAR SPLITTER + HEADER ======= */
+html:not([privatebrowsingmode="temporary"]) #sidebar-splitter {
+  display: none !important;
+  background: transparent !important;
+  border: none !important;
+  width: 1px !important;
+}
+
+html:not([privatebrowsingmode="temporary"]) #sidebar-header {
+  display: none;
+}
+
+/* ======= FULLSCREEN FIX ======= */
+html:not([privatebrowsingmode="temporary"]) #main-window[sizemode="fullscreen"] #sidebar-box {
+  --uc-sidebar-width: 1px;
+}
