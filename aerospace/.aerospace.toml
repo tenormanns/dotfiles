@@ -24,13 +24,11 @@ outer.right = 10
 preset = 'qwerty'
 
 [mode.main.binding]
-# Terminal
-alt-enter = '''exec-and-forget osascript -e '
-tell application "kitty"
-    do script ""
-    activate
-end tell'
-'''
+
+# Applications
+alt-enter = 'exec-and-forget open -a /Applications/Kitty.app'
+alt-shift-f = 'exec-and-forget open -a /System/Library/CoreServices/Finder.app'
+alt-shift-b = 'exec-and-forget open -a /Applications/Firefox.app'
 
 # Window focus (vim-style)
 alt-h = 'focus left'
@@ -73,10 +71,6 @@ alt-e = 'layout tiles horizontal'  # horizontal split
 alt-v = 'layout tiles vertical'    # vertical split
 alt-w = 'layout accordion'  # accordion layout (fullscreen-like)
 alt-f = ['mode service', 'layout floating tiling']  # toggle floating
-
-# Workspace navigation (similar to your i3 tab bindings)
-alt-tab = 'workspace-back-and-forth'
-alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 
 # Kill window (equivalent to your i3 alt+shift+q)
 alt-shift-q = 'close'
