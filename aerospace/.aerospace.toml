@@ -27,6 +27,7 @@ preset = 'qwerty'
 
 # Applications
 alt-enter = 'exec-and-forget open -a /Applications/Kitty.app'
+alt-shift-e = 'exec-and-forget open -a /Applications/Emacs.app'
 alt-shift-f = 'exec-and-forget open -a /System/Library/CoreServices/Finder.app'
 alt-shift-b = 'exec-and-forget open -a /Applications/Firefox.app'
 
