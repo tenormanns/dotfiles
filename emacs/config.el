@@ -4,7 +4,7 @@
 ;; Basic Doom Configuration
 ;; ========================
 
-(setq doom-theme 'doom-one)
+(setq doom-theme 'doom-gruvbox)
 (setq display-line-numbers-type t)
 (setq org-directory "~/org/")
 
@@ -104,3 +104,13 @@
        :desc "Insert roam node" "i" #'org-roam-node-insert
        :desc "Capture menu"     "c" #'org-capture
        :desc "Daily Plan"       "d" #'my/org-daily-plan))
+
+;; ==============================
+;; Org-Todoist
+;; ==============================
+
+(after! org
+  (setq org-todoist-api-token
+        (auth-source-pick-first-password
+         :host "todoist.com"
+         :user "api-token")))
