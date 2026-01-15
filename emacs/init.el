@@ -204,3 +204,7 @@
        :config
        ;;literate
        (default +bindings +smartparens))
+
+(require 'org-habit)
+(add-to-list 'org-modules 'org-habit)
+
