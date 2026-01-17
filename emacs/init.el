@@ -195,7 +195,7 @@
        ;;notmuch
        ;;(wanderlust +gmail)
 
-       :app
+       :appw
        ;;calendar
        ;;emms
        ;;everywhere        ; *leave* Emacs!? You must be joking
@@ -206,5 +206,6 @@
        ;;literate
        (default +bindings +smartparens))
 
-(require 'org-habit)
-(add-to-list 'org-modules 'org-habit)
+(after! org
+  (add-to-list 'org-modules 'org-habit))
+
