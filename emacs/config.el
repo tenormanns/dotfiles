@@ -8,6 +8,15 @@
 (setq display-line-numbers-type t)
 (setq org-directory "~/org/")
 
+;; ==================
+;; Refresh on changes
+;; ==================
+
+(global-auto-revert-mode 1)
+
+(setq global-auto-revert-non-file-buffers t) ;; also refresh dired, etc.
+(setq auto-revert-verbose nil) ;; silence messages
+
 ;; ===================
 ;; Org-Agenda Settings
 ;; ===================
