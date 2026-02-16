@@ -21,8 +21,8 @@
 ;; Org-Agenda Settings
 ;; ===================
 
-(after! org
-  (setq org-agenda-files (directory-files-recursively "~/org/" "\\.org$")))
+(setq org-agenda-files '("~/org"
+                         "~/notes"))
 
 ;; ==============================
 ;; Org-roam Configuration
