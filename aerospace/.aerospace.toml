@@ -101,3 +101,8 @@ alt-shift-h = ['join-with left', 'mode main']
 alt-shift-j = ['join-with down', 'mode main']
 alt-shift-k = ['join-with up', 'mode main']
 alt-shift-l = ['join-with right', 'mode main']
+
+# Force floating apps
+[[on-window-detected]]
+if.app-name-regex-substring = 'shottr.app'
+run = 'layout floating'
