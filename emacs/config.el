@@ -1,107 +1,125 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-;; ========================
-;; Basic Doom Configuration
-;; ========================
+;; ==============================
+;; Core
+;; ==============================
 
-(setq doom-theme 'doom-gruvbox)
-(setq display-line-numbers-type t)
-(setq org-directory "~/org/")
-
-;; ==================
-;; Refresh on changes
-;; ==================
+(setq doom-theme                'doom-gruvbox
+      display-line-numbers-type t
+      org-directory             "~/org/")
 
 (global-auto-revert-mode 1)
-
-(setq global-auto-revert-non-file-buffers t) ;; also refresh dired, etc.
-(setq auto-revert-verbose nil) ;; silence messages
-
-;; ===================
-;; Org-Agenda Settings
-;; ===================
-
-(setq org-agenda-files '("~/org"
-                         "~/notes"))
+(setq global-auto-revert-non-file-buffers t
+      auto-revert-verbose               nil)
 
 ;; ==============================
-;; Org-roam Configuration
-;; ==============================
-
-(after! org-roam
-  ;; Org-roam Directory
-  (setq org-roam-directory (file-truename "~/org/org-roam/"))
-
-  ;; Org-roam Capture Templates
-  (setq org-roam-capture-templates
-        '(("n" "Generic Note" plain "%?"
-           :if-new (file+head "notes/${slug}.org"
-                              "#+title: ${title}\n")
-           :unnarrowed t)
-          ("u" "University Note" plain "%?"
-           :if-new (file+head "unsw/y1t2/${slug}.org"
-                              "#+title: ${title}\n#+filetags: :university:\n")
-           :unnarrowed t)
-          ("b" "Book Note" plain "%?"
-           :if-new (file+head "books/${slug}.org"
-                              "#+title: ${title}\n#+filetags: :book:\n")
-           :unnarrowed t)
-          ("p" "Personal Note" plain "%?"
-           :if-new (file+head "personal/${slug}.org"
-                              "#+title: ${title}\n#+filetags: :personal:\n")
-           :unnarrowed t))))
-
-;; ==============================
-;; Custom Functions (Defined First)
-;; ==============================
-
-(defun my/org-capture-note-dispatch ()
-  "Prompt for note type and launch corresponding org-roam-capture template."
-  (interactive)
-  (let* ((note-type (completing-read "Note type: " '("Generic" "University" "Book" "Personal") nil t))
-         (template-key (pcase note-type
-                         ("Generic" "n")
-                         ("University" "u")
-                         ("Book" "b")
-                         ("Personal" "p"))))
-    (org-roam-capture- :node (org-roam-node-read) :keys template-key)))
-
-(defun my/org-daily-plan ()
-  "Open or create a daily plan note for a selected date using a calendar picker."
-  (interactive)
-  ;; Prompt user with a date picker
-  (let* ((time (org-read-date nil t nil "Select date (default: today): "))
-         (date-str (format-time-string "%Y-%m-%d" time))
-         (title (format "Daily Plan - %s" date-str))
-         (file-path (expand-file-name (format "plans/%s.org" date-str) org-roam-directory)))
-    ;; If file already exists, just open it
-    (if (file-exists-p file-path)
-        (find-file file-path)
-      ;; Otherwise, create it manually (not using template that overrides date)
-      (progn
-        (make-directory (file-name-directory file-path) t)
-        (find-file file-path)
-        (insert (format "#+title: %s\n#+filetags: :daily:plan:\n\n" title))
-        (save-buffer)
-        (message "Created new daily plan for %s" date-str)))))
-
-;; ==============================
-;; Org Capture Configuration
+;; Org Agenda
 ;; ==============================
 
 (after! org
-  ;; Unified Org Capture Menu
+  (setq org-agenda-files '("~/org"))
+
   (setq org-capture-templates
-        `(("t" "TODO" entry (file+headline ,(expand-file-name "inbox.org" org-directory) "Tasks")
-           "* TODO %?\n  %i\n  %a")
+        `(("t" "TODO" entry
+           (file+headline ,(expand-file-name "inbox.org" org-directory) "Tasks")
+           "* TODO %?\n%i\n%a")))
 
-          ("n" "Note" plain
-           (function my/org-capture-note-dispatch)
-           "")
+  (setq org-latex-pdf-process
+        '("latexmk -pdflatex='pdflatex -interaction nonstopmode' -pdf -bibtex -f %f"))
 
-          ("d" "Daily Plan" plain
-           (function my/org-daily-plan)
-           ""))))
+  (setq org-ref-default-bibliography
+        (list (expand-file-name "~/org/refs/biblio.bib"))))
+
+;; ==============================
+;; Org-roam
+;; ==============================
+
+(after! org-roam
+  (setq org-roam-directory (file-truename "~/org/org-roam/"))
+  (setq org-roam-capture-templates
+        '(("n" "Personal Note" plain "%?"
+           :if-new (file+head "notes/${slug}.org"
+                              "#+title: ${title}\n#+filetags: :personal:\n")
+           :unnarrowed t)
+          ("u" "University Note" plain "%?"
+           :if-new (file+head "university/class/${slug}.org"
+                              "#+title: ${title}\n#+filetags: :university:\n")
+           :unnarrowed t)
+          ("b" "Book Note" plain
+           "* Summary\n\n* Key Ideas\n\n* Quotes\n\n%?"
+           :if-new (file+head "books/${slug}.org"
+                              "#+title: ${title}\n#+filetags: :book:\n")
+           :unnarrowed t)
+          ("r" "Research Paper" plain "%?"
+           :target (file+head "~/org/org-roam/refs/${citekey}.org"
+                              "#+title: ${title}
+#+filetags: :research:paper:
+#+created: %u
+#+modified:
+
+* ${title}
+:PROPERTIES:
+:CITEKEY: ${citekey}
+:Tags:
+:Start: %u
+:Fin:
+:END:
+
+** Actions
+
+** Key Ideas
+
+** Notes
+")
+           :unnarrowed t))))
+
+;; ==============================
+;; Bibliography
+;; orb var MUST be set before use-package!
+;; to prevent ORB claiming SPC n r
+;; ==============================
+
+(setq orb-insert-link-no-default-keybinding t)
+
+(use-package! org-ref
+  :config
+  (setq bibtex-completion-bibliography '("~/org/refs/biblio.bib")
+        bibtex-completion-notes-path    "~/org/org-roam/refs"
+        bibtex-completion-pdf-field     "file"
+        bibtex-completion-pdf-open-function
+        ;; Detect OS and use the right opener
+        (lambda (fpath)
+          (call-process
+           (cond ((eq system-type 'darwin)  "open")       ; macOS
+                 ((eq system-type 'gnu/linux) "xdg-open") ; Arch Linux
+                 (t "open"))                               ; fallback
+           nil 0 nil fpath))))
+
+(use-package! ivy-bibtex
+  :after org-ref)
+
+(use-package! org-roam-bibtex
+  :after (org-roam org-ref)
+  :config
+  (require 'org-ref)
+  (org-roam-bibtex-mode +1))
+
+;; ==============================
+;; Note Capture Dispatch
+;; ==============================
+
+(defun my/note-dispatch ()
+  "Choose a note type and open the matching org-roam capture template.
+Switches to *scratch* first to avoid org-element errors when called
+from a non-org buffer like the Doom dashboard."
+  (interactive)
+  (with-current-buffer (get-buffer-create "*scratch*")
+    (let* ((choices '(("Personal Note"   . "n")
+                      ("University Note" . "u")
+                      ("Book Note"       . "b")))
+           (pick (completing-read "Note type: " (mapcar #'car choices) nil t))
+           (key  (cdr (assoc pick choices))))
+      (org-roam-capture- :node (org-roam-node-read) :keys key))))
 
 ;; ==============================
 ;; Keybindings
@@ -109,17 +127,8 @@
 
 (map! :leader
       (:prefix ("n" . "notes")
-       :desc "Find roam node"   "f" #'org-roam-node-find
-       :desc "Insert roam node" "i" #'org-roam-node-insert
-       :desc "Capture menu"     "c" #'org-capture
-       :desc "Daily Plan"       "d" #'my/org-daily-plan))
-
-;; ==============================
-;; Org-Todoist
-;; ==============================
-
-(after! org
-  (setq org-todoist-api-token
-        (auth-source-pick-first-password
-         :host "todoist.com"
-         :user "api-token")))
+       :desc "Find node"        "f" #'org-roam-node-find
+       :desc "Insert node link" "i" #'org-roam-node-insert
+       :desc "Capture note"     "c" #'my/note-dispatch
+       :desc "Capture TODO"     "t" #'org-capture
+       :desc "Capture paper"    "R" #'orb-insert-link))
